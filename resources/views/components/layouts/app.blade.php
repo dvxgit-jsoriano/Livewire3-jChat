@@ -43,7 +43,8 @@
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open=!open"
                                 class="flex items-center text-gray-700 hover:text-gray-900 focus:outline-none cursor-pointer">
-                                <span class="ml-2"><i class="fas fa-user"></i></span>
+                                <span class="mr-2">{{ Auth::user()->name }}</span>
+                                <i class="fas fa-user"></i>
                             </button>
                             <div x-show="open" @click.away="open = false"
                                 x-transition:enter="transition ease-out duration-100"
@@ -57,8 +58,13 @@
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                                 <a href="#"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                                <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer w-full text-left">
+                                        Logout
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -91,7 +97,13 @@
                     <hr class="my-4">
                     <a href="#" class="block text-gray-700 hover:text-gray-900">Profile</a>
                     <a href="#" class="block text-gray-700 hover:text-gray-900">Settings</a>
-                    <a href="#" class="block text-gray-700 hover:text-gray-900">Logout</a>
+                    <form method="POST" action="{{ route('logout') }}" class="block">
+                        {{-- CSRF Token for Logout --}}
+                        @csrf
+                        <button type="submit" class="block text-gray-700 hover:text-gray-900">
+                            Logout
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

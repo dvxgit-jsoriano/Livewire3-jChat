@@ -4,8 +4,8 @@
         {{-- Chat List (responsive) --}}
         <div class="w-80 border-r border-gray-200 hidden md:block"
             :class="{ 'hidden md:block': !mobileListOpen, 'absolute inset-0 z-10 bg-white': mobileListOpen }">
-            <div class="p-4">
-                <div class="relative z-10 flex items-center">
+            <div class="p-4 bg-gray-50 border-b border-b-gray-300">
+                <div class="relative z-10 flex items-center bg-gray-100">
                     <input type="text" placeholder="Search conversations..."
                         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <svg class="w-5 h-5 absolute right-10 top-3 text-gray-400" fill="none" stroke="currentColor"
@@ -23,12 +23,66 @@
             </div>
 
             <div class="overflow-y-auto h-full">
-                {{-- Chat List Items --}}
-                <div class="p-4 hover:bg-gray-50 cursor-pointer">
-                    <div class="font-semibold">John Doe</div>
-                    <div class="text-sm text-gray-500">Latest message...</div>
+                <div class="flex justify-center items-center border-b border-b-gray-300">
+                    <button wire:click="$set('showCreateModal', true)"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 my-4">
+                        Start New Conversation
+                    </button>
                 </div>
-                {{-- Add more chat items here --}}
+
+                {{-- Chat List Items --}}
+                @forelse($rooms as $room)
+                    <div class="p-4 hover:bg-gray-50 cursor-pointer border-b border-b-gray-300">
+                        <div class="font-semibold">{{ $room['name'] }}</div>
+                        <div class="text-sm text-gray-500 truncate">
+                            {{ $room['latest_message'] }}
+                        </div>
+                        <div class="text-xs text-gray-400">
+                            {{ $room['latest_time'] }}
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-4 text-gray-500">No conversations yet.</div>
+                @endforelse
+            </div>
+
+
+            <!-- Modal Background -->
+            <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+                x-show="$wire.showCreateModal" x-on:click.self="$wire.showCreateModal = false">
+
+                <!-- Modal Content -->
+                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                    <!-- Modal Header -->
+                    <div class="text-xl font-semibold mb-4">
+                        Create New Conversation
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="mt-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            User Email
+                        </label>
+                        <input type="email"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            wire:model.defer="email">
+                        @error('email')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="mt-6 flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                            wire:click="$set('showCreateModal', false)">
+                            Cancel
+                        </button>
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            wire:click="createRoom">
+                            Create
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -75,4 +129,15 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let userId = @json(auth()->id());
+
+            window.Echo.private(`user.${userId}`)
+                .listen('.new.chat.room', (e) => {
+                    console.log("🔥 New chat room event received:", e);
+                });
+        });
+    </script>
 </div>
