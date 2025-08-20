@@ -137,6 +137,9 @@
             window.Echo.private(`user.${userId}`)
                 .listen('.new.chat.room', (e) => {
                     console.log("🔥 New chat room event received:", e);
+
+                    // trigger a Livewire refresh
+                    Livewire.dispatch('refresh-chat-list');
                 });
         });
     </script>

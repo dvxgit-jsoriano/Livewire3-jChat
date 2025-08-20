@@ -9,6 +9,8 @@ use Livewire\Component;
 
 class PageDashboard extends Component
 {
+    protected $listeners = ['refresh-chat-list' => '$refresh'];
+
     public $rooms = [];
     public $showCreateModal = false; // <-- Add this
     public $email; // <-- since you bind wire:model.defer="email"
@@ -86,6 +88,6 @@ class PageDashboard extends Component
 
     public function render()
     {
-        return view('livewire.admin.page-dashboard');
+        return view('livewire.admin.page-dashboard', ['rooms' => ChatRoom::latest()->get()]);
     }
 }
