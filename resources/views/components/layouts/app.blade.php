@@ -13,9 +13,9 @@
 </head>
 
 <body>
-    <div class="min-h-screen bg-gray-100" x-data="{ mobileMenu: false }">
+    <div class="min-h-screen bg-green-900" x-data="{ mobileMenu: false }">
         {{-- Top Navigation Bar --}}
-        <nav class="bg-white shadow-sm">
+        <nav class="bg-green-800 shadow-sm text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     {{-- Logo and Title --}}
@@ -27,22 +27,21 @@
 
                     {{-- Mobile Menu Button --}}
                     <div class="sm:hidden flex items-center">
-                        <button @click="mobileMenu=true" class="text-gray-600 hover:text-gray-900">
+                        <button @click="mobileMenu=true" class="text-gray-50 hover:text-gray-100">
                             <i class="fas fa-bars text-2xl"></i>
                         </button>
                     </div>
 
                     {{-- Desktop Navigation Menu --}}
-                    <div class="hidden sm:flex sm:items-center space-x-8">
-                        <a href="{{ route('contacts') }}" class="text-gray-700 hover:text-gray-900">Contacts</a>
-                        <a href="{{ route('chats') }}" class="text-gray-700 hover:text-gray-900">Chats</a>
+                    <div class="hidden sm:flex sm:items-center space-x-8 text-gray-50 hover:text-gray-100">
+                        <a href="{{ route('contacts') }}">Contacts</a>
+                        <a href="{{ route('chats') }}">Chats</a>
                     </div>
 
                     {{-- User Dropdown --}}
-                    <div class="hidden sm:flex items-center">
+                    <div class="hidden sm:flex items-center text-gray-50 hover:text-gray-100">
                         <div class="relative" x-data="{ open: false }">
-                            <button @click="open=!open"
-                                class="flex items-center text-gray-700 hover:text-gray-900 focus:outline-none cursor-pointer">
+                            <button @click="open=!open" class="flex items-center focus:outline-none cursor-pointer">
                                 <span class="mr-2">{{ Auth::user()->name }}</span>
                                 <i class="fas fa-user"></i>
                             </button>

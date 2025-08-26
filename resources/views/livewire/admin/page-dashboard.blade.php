@@ -1,10 +1,10 @@
 {{-- Chat Interface --}}
-<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4" x-data="{ mobileListOpen: false }">
-    <div class="flex h-[calc(100vh-8rem)] bg-white rounded-lg shadow-sm relative">
+<div class="max-w-7xl mx-auto border-8 border-green-950 shadow-2xl mt-4 rounded-3xl" x-data="{ mobileListOpen: false }">
+    <div class="flex h-[calc(100vh-8rem)] bg-white rounded-2xl shadow-sm relative">
         {{-- Chat List (responsive) --}}
-        <div class="w-80 border-r border-gray-200 hidden md:block"
+        <div class="w-80 border-gray-200 hidden md:block"
             :class="{ 'hidden md:block': !mobileListOpen, 'absolute inset-0 z-10 bg-white': mobileListOpen }">
-            <div class="p-4 bg-gray-50 border-b border-b-gray-300">
+            <div class="p-4 bg-gray-50 border-b border-b-gray-300 rounded-tl-2xl">
                 <div class="relative z-10 flex items-center bg-gray-100">
                     <input type="text" placeholder="Search conversations..."
                         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -89,7 +89,7 @@
         {{-- Chat Content --}}
         <div class="flex-1 flex flex-col">
             {{-- Chat Header --}}
-            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center rounded-t-2xl">
                 <div class="flex items-center">
                     <button class="md:hidden mr-2" @click="mobileListOpen = true">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
