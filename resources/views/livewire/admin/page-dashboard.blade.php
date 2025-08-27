@@ -1,11 +1,11 @@
 {{-- Chat Interface --}}
-<div class="max-w-7xl mx-auto border-8 border-green-950 shadow-2xl mt-4 rounded-3xl" x-data="{ mobileListOpen: false }">
-    <div class="flex h-[calc(100vh-8rem)] bg-white rounded-2xl shadow-sm relative">
+<div class="max-w-7xl mx-auto border-8 border-green-950 shadow-2xl mt-2 rounded-3xl" x-data="{ mobileListOpen: false }">
+    <div class="flex h-[calc(100vh-6rem)] bg-white rounded-2xl shadow-sm relative">
         {{-- Chat List (responsive) --}}
-        <div class="w-80 border-gray-200 hidden md:block"
+        <div class="w-80 border-gray-200 rounded-2xl hidden md:block border-e-2 shadow"
             :class="{ 'hidden md:block': !mobileListOpen, 'absolute inset-0 z-10 bg-white': mobileListOpen }">
-            <div class="p-4 bg-gray-50 border-b border-b-gray-300 rounded-tl-2xl">
-                <div class="relative z-10 flex items-center bg-gray-100">
+            <div class="p-4 border-b border-b-gray-300 rounded-tl-2xl">
+                <div class="relative z-10 flex items-center">
                     <input type="text" placeholder="Search conversations..."
                         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <svg class="w-5 h-5 absolute right-10 top-3 text-gray-400" fill="none" stroke="currentColor"
@@ -48,11 +48,12 @@
 
 
             <!-- Modal Background -->
-            <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+            <div class="fixed inset-0 z-10 overflow-y-auto h-full shadow-2xl" style="background-color: rgba(0,0,0,0.4);"
                 x-show="$wire.showCreateModal" x-on:click.self="$wire.showCreateModal = false">
 
                 <!-- Modal Content -->
-                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div
+                    class="relative top-20 mx-auto w-[300px] sm:w-96 p-5 border-2 border-green-950 shadow-2xl rounded-xl bg-white">
                     <!-- Modal Header -->
                     <div class="text-xl font-semibold mb-4">
                         Create New Conversation
