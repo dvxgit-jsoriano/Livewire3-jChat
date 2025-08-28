@@ -89,7 +89,7 @@
         </div>
 
         {{-- Chat Content --}}
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col w-full">
             {{-- Chat Header --}}
             <div class="p-4 border-b border-gray-200 flex justify-between items-center rounded-t-2xl">
                 <div class="flex items-center">
@@ -179,7 +179,7 @@
                     el,
                     component
                 }) => {
-                    console.log(component);
+                    //console.log(component);
                     console.log("🔽 Scrolling to bottom");
                     let container = document.getElementById('chat-messages');
                     if (container) {

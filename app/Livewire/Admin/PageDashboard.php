@@ -115,7 +115,7 @@ class PageDashboard extends Component
         broadcast(new NewChatMessage($message)); // <= prevents echoing to self
 
         $this->reset('messageText');
-        $this->loadMessages();
+        //$this->loadMessages();
     }
 
     public function loadMessages()
@@ -153,6 +153,7 @@ class PageDashboard extends Component
 
     public function rendered()
     {
+        Log::debug("Component rendered");
         $this->dispatch('chat-scrolled');
     }
 }

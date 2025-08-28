@@ -13,6 +13,7 @@ export default defineConfig({
     server: {
         host: '0.0.0.0',
         port: 5173, // or any free port for Vite dev server
+        cors: true,            // enable CORS
         hmr: {
             host: '192.168.33.155',
         },
