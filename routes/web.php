@@ -1,11 +1,13 @@
 <?php
 
+use App\Events\NewChatMessage;
 use App\Events\NewChatRoom;
 use App\Http\Controllers\AuthController;
 use App\Livewire\Admin\PageContacts;
 use App\Livewire\Admin\PageDashboard;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
+use App\Models\ChatMessage;
 use App\Models\ChatRoom;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -41,3 +43,14 @@ Route::get('test/user/{user}/room/{room}', function ($user, $room) {
     //broadcast(new NewChatRoom($chatRoom, $chatUser))->toOthers();
     //NewChatRoom::dispatch($chatRoom, $chatUser);
 })->name('test');
+
+Route::get('test-message/user/{user}/room/{room}/message/{message}', function ($user, $room, $message) {
+    Log::debug("Test message route called with user: {$user}, room: {$room}, message: {$message}");
+    $chatMessage = ChatMessage::create([
+        'chat_room_id' => $room,
+        'user_id' => $user,
+        'message' => $message,
+    ]);
+    event(new NewChatMessage($chatMessage));
+    //broadcast(new NewChatMessage($chatMessage))->toOthers();
+})->name('test-message');

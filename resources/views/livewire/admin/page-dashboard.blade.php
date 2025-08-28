@@ -30,9 +30,10 @@
                     </button>
                 </div>
 
-                {{-- Chat List Items --}}
                 @forelse($rooms as $room)
-                    <div class="p-4 hover:bg-gray-50 cursor-pointer border-b border-b-gray-300">
+                    <div wire:click="selectRoom({{ $room['id'] }})"
+                        class="p-4 hover:bg-gray-50 cursor-pointer border-b border-b-gray-300
+                        {{ $currentRoomId === $room['id'] ? 'bg-blue-50' : '' }}">
                         <div class="font-semibold">{{ $room['name'] }}</div>
                         <div class="text-sm text-gray-500 truncate">
                             {{ $room['latest_message'] }}
@@ -102,28 +103,38 @@
             </div>
 
             {{-- Chat Messages --}}
-            <div class="flex-1 overflow-y-auto p-4 space-y-4">
-                {{-- Received Message --}}
-                <div class="flex items-start">
-                    <div class="bg-gray-100 rounded-lg p-3 max-w-[70%]">
-                        <p>This is a received message</p>
-                    </div>
-                </div>
-
-                {{-- Sent Message --}}
-                <div class="flex items-start justify-end">
-                    <div class="bg-blue-500 text-white rounded-lg p-3 max-w-[70%]">
-                        <p>This is a sent message</p>
-                    </div>
-                </div>
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                @foreach ($messages as $message)
+                    @if ($message['user_id'] === auth()->id())
+                        <div class="text-right">
+                            <p class="inline-block bg-blue-500 text-white px-3 py-1 rounded-lg">
+                                {{ $message['message'] }}
+                            </p>
+                            <span class="text-xs text-gray-500 block">
+                                {{ $message['created_at'] }}
+                            </span>
+                        </div>
+                    @else
+                        <div class="text-left">
+                            <p class="inline-block bg-gray-200 px-3 py-1 rounded-lg">
+                                {{ $message['message'] }}
+                            </p>
+                            <span class="text-xs text-gray-500 block">
+                                {{ $message['created_at'] }}
+                            </span>
+                        </div>
+                    @endif
+                @endforeach
             </div>
 
             {{-- Message Input --}}
             <div class="p-4 border-t border-gray-200">
                 <div class="flex space-x-2">
-                    <input type="text" placeholder="Type your message..."
+                    <input type="text" wire:model="messageText" wire:keydown.enter="sendMessage"
+                        placeholder="Type your message..."
                         class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                    <button wire:click="sendMessage"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
                         Send
                     </button>
                 </div>
@@ -134,7 +145,9 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let userId = @json(auth()->id());
+            let currentRoomId = null;
 
+            // Listen for new chat rooms
             window.Echo.private(`user.${userId}`)
                 .listen('.new.chat.room', (e) => {
                     console.log("🔥 New chat room event received:", e);
@@ -142,6 +155,41 @@
                     // trigger a Livewire refresh
                     Livewire.dispatch('refresh-chat-list');
                 });
+
+            // when Livewire tells us the selected room changed
+            Livewire.on('room-selected', (event) => {
+                const roomId = event.roomId;
+
+                // subscribe to the new room
+                window.Echo.private(`chat.${roomId}`)
+                    // must match broadcastAs(): 'new.message'
+                    .listen('.new.message', (e) => {
+                        // I want to call the loadMessage() method in Livewire class of this PageDashboard
+                        Livewire.dispatch('chat-message-received', e);
+
+                        //Livewire.dispatch('chat-scrolled');
+                    });
+            });
+        });
+
+        document.addEventListener('livewire:init', function() {
+            console.log("🚀 Livewire is loaded");
+            Livewire.on('chat-scrolled', () => {
+                Livewire.hook('morphed', ({
+                    el,
+                    component
+                }) => {
+                    console.log(component);
+                    console.log("🔽 Scrolling to bottom");
+                    let container = document.getElementById('chat-messages');
+                    if (container) {
+                        container.scrollTo({
+                            top: container.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
         });
     </script>
 </div>

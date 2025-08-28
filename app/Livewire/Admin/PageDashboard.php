@@ -2,18 +2,32 @@
 
 namespace App\Livewire\Admin;
 
+use App\Events\NewChatMessage;
 use App\Events\NewChatRoom;
+use App\Models\ChatMessage;
 use App\Models\ChatRoom;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class PageDashboard extends Component
 {
-    protected $listeners = ['refresh-chat-list' => '$refresh'];
+    protected $listeners = [
+        'refresh-chat-list' => 'loadMessages',
+        'chat-message-received' => 'loadMessages'
+    ];
 
     public $rooms = [];
     public $showCreateModal = false; // <-- Add this
     public $email; // <-- since you bind wire:model.defer="email"
+
+    public $messageText = '';
+    public $currentRoomId = null;
+    public $messages = [];
+
+    protected $rules = [
+        'messageText' => 'required|min:1'
+    ];
 
     public function mount()
     {
@@ -86,8 +100,59 @@ class PageDashboard extends Component
         $this->reset(['showCreateModal', 'email']);
     }
 
+    public function sendMessage()
+    {
+        $this->validate();
+
+        if (!$this->currentRoomId) return;
+
+        $message = ChatMessage::create([
+            'chat_room_id' => $this->currentRoomId,
+            'user_id'      => Auth::id(),
+            'message'      => $this->messageText,
+        ]);
+
+        broadcast(new NewChatMessage($message)); // <= prevents echoing to self
+
+        $this->reset('messageText');
+        $this->loadMessages();
+    }
+
+    public function loadMessages()
+    {
+        if (!$this->currentRoomId) {
+            $this->messages = [];
+            return;
+        }
+
+        $this->messages = ChatMessage::with('sender')
+            ->where('chat_room_id', $this->currentRoomId)
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->toArray();
+
+        //$this->dispatch('chat-scrolled');
+    }
+
+    public function selectRoom($roomId)
+    {
+        $this->currentRoomId = $roomId;
+
+        $this->dispatch('room-selected', roomId: $roomId);
+
+        $this->loadMessages();
+        Log::debug("Selected room ID: {$roomId}");
+
+        //$this->dispatch('chat-scrolled');
+    }
+
     public function render()
     {
         return view('livewire.admin.page-dashboard', ['rooms' => ChatRoom::latest()->get()]);
+    }
+
+    public function rendered()
+    {
+        $this->dispatch('chat-scrolled');
     }
 }

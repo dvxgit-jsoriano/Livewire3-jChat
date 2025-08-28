@@ -10,4 +10,11 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    server: {
+        host: '0.0.0.0',
+        port: 5173, // or any free port for Vite dev server
+        hmr: {
+            host: '192.168.33.155',
+        },
+    },
 });
